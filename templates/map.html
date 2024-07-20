@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HelpSetu | Track Report</title>
+    <link rel="shortcut icon" href="../static/images/image.png" type="image/x-icon">
+    <link rel="icon" href="../static/images/image.png" type="image/x-icon" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <style>
+        *{
+            padding: 0px;
+            margin: 0px;
+            box-sizing: border-box;
+        }
+        .navbar.bg-dark.border-bottom{
+            background-color: #002324 !important;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar bg-dark border-bottom border-body" data-bs-theme="dark">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="{{ url_for('index') }}"><img src="../static/images/Logo.png" alt="Help Setu Logo" class="logo image"></a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+              <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="{{ url_for('index') }}">Home</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('rewards') }}">Account</a>
+              </li>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  About-Us
+                </a>
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item" href="{{ url_for('donate') }}">Donate Us</a></li>
+                  <li><a class="dropdown-item" href="{{ url_for('partners') }}">Partners</a></li>
+                  <li><hr class="dropdown-divider"></li>
+                  <li><a class="dropdown-item" href="{{ url_for('part') }}">About Us</a></li>
+                </ul>
+              </li>
+            </form>
+          </div>
+        </div>
+    </nav>
+    <div id="map" style="height: 650px;"></div>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script>
+      var reportData = {{ report_data | tojson }};
+
+      var map = L.map('map', {
+        center: [20.5937, 78.9629], // Centered on India
+        zoom: 5,
+        scrollWheelZoom: false, // Disable scroll wheel zoom
+        maxBounds: [
+          [6.4626999, 68.1097], // Southwest coordinates of India
+          [35.513327, 97.395358] // Northeast coordinates of India
+        ],
+        maxBoundsViscosity: 1.0 // Prevents users from dragging outside the specified bounds
+      });
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          maxZoom: 19,
+          attribution: '© OpenStreetMap contributors'
+      }).addTo(map);
+
+      for (var state in reportData) {
+          var count = reportData[state];
+          // Add a marker for each state with a popup showing the report count
+          var marker = L.marker(getStateLatLng(state)).addTo(map)
+              .bindPopup(state + ': ' + count + ' reports');
+      }
+
+      function getStateLatLng(state) {
+          var stateLatLng = {
+              'Delhi': [28.7041, 77.1025],
+              'Maharashtra': [19.7515, 75.7139],
+              'Andhra Pradesh': [15.9129, 79.73999],
+              'Arunachal Pradesh': [28.2180,94.7278],
+              'Assam': [26.2006, 92.9376],
+              'Bihar': [25.0961, 85.3131],
+              'Chhatisgarh': [21.2787, 81.8661],
+              'Goa': [15.2993, 74.1240],
+              'Gujrat': [22.2587, 71.1924],
+              'Haryana': [29.0588, 76.0856],
+              'Himachal Pradesh': [31.1048, 77.1734],
+              'Jharkand': [23.6102, 85.2799],
+              'Karnatka': [15.3173, 75.7139],
+              'Kerla': [10.8505, 76.2711],
+              'Madhya Pradesh': [22.9734, 78.6569],
+              'Manipur': [24.6637, 93.9063],
+              'Meghalaya': [25.4670, 91.3662],
+              'Mizoram': [23.1645, 92.9376],
+              'Nagaland': [26.1584, 94.5624],
+              'Odisha': [20.9517, 85.0985],
+              'Punjab': [31.1471, 75.3412],
+              'Rajasthan': [27.0238, 74.2179],
+              'Sikkim': [27.5330, 88.5122],
+              'Tamil Nadu': [11.1271, 78.6569],
+              'Telangana': [18.1124, 79.0193],
+              'Tripura': [23.9408, 91.9882],
+              'Uttar Pradesh': [26.8467, 80.9462],
+              'Uttrakhand': [30.0668,79.0193],
+              'West Bengal': [22.9868, 87.8550],
+          };
+          return stateLatLng[state] || [20.5937, 78.9629]; // Default to center of India if state not found
+      }
+
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+</body>
+</html>
