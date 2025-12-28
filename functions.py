@@ -1,5 +1,5 @@
 from flask_login import UserMixin
-def UserModel(db):
+def UserModel(db):   # called a factory function
     class User(db.Model, UserMixin):
         id = db.Column(db.Integer, primary_key=True)
         fullname = db.Column(db.String(100), nullable=False)
