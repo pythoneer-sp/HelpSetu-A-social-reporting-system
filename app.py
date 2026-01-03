@@ -6,7 +6,6 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import func
 from functions import UserModel,ReportModel,StateReportModel
-from config import SECRET_KEY, MAIL_PASSWORD, TWILIO_ACCOUNT_SIID, TWILIO_AUTH_TOKEEN
 from twilio.rest import Client
 import random
 import os
@@ -15,19 +14,19 @@ from flask_mail import Mail, Message
 from email.mime.application import MIMEApplication
 from mimetypes import guess_type
 from dotenv import load_dotenv
+from email_utils import mail, create_app, generate_verification_token, send_verification_email, confirm_verification_token
 load_dotenv()
 
 app = Flask(__name__)
-app.secret_key = SECRET_KEY
+app.secret_key = os.getenv('SECRET_KEY')
 
 
 # Configure your Flask app to use Flask-Mail
-app.config['MAIL_SERVER'] = 'smtp.googlemail.com'
-app.config['MAIL_PORT'] = 587
-app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USERNAME'] = 'mail.helpsetu@gmail.com'
-app.config['MAIL_PASSWORD'] = MAIL_PASSWORD
-mail = Mail(app)
+app.config['MAIL_SERVER'] = os.getenv('MAIL_SERVER')
+app.config['MAIL_PORT'] = os.getenv('MAIL_PORT')
+app.config['MAIL_USE_TLS'] = os.getenv('MAIL_USE_TLS')
+app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')
+app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
 mail= Mail(app)
 # Function to send mail
 def send_email(r_email,new_report,file_path):
